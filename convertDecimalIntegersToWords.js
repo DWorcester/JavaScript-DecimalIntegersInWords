@@ -304,7 +304,8 @@ class PositiveDecimalIntegerInWords {
                     numberInWords = `${firstTwoDigits} million` + millionsThousandsSeparator + residualInWords;
                
                     // This test determines whether the word 'and' is required in the English words for the residual.
-                    if ( residual <= 100 || residual % 100 === 0 ) {
+                    // The same as for the thousands (1000s) because the residual occurs after the first two digits.
+                    if ( residual <= 100 || (residual % 100 === 0 && residual % 1000 !== 0) ) {
                         residualInWords = hundredsUnitsSeparator + residualInWords;     
                         numberInWords = `${firstTwoDigits} thousand ` + residualInWords;
                     } else {
@@ -330,7 +331,8 @@ class PositiveDecimalIntegerInWords {
                     let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
 
                     // This test determines whether the word 'and' is required in the English words for the residual.
-                    if ( residual <= 100 || (residual % 100 === 0 && residual < 1000) || (residual % 1000 === 0 && residual < 10000) ) {
+                    // The same as for the thousands (1000s) because the residual occurs after the first three digits.
+                    if ( residual <= 100 || (residual % 100 === 0 && residual % 1000 !== 0) ) {
                         residualInWords = hundredsUnitsSeparator + residualInWords;     
                         numberInWords = `${firstThreeDigits} thousand ` + residualInWords;
                     } else {
@@ -350,9 +352,8 @@ class PositiveDecimalIntegerInWords {
                     let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
 
                     // This test determines whether the word 'and' is required in the English words for the residual.
-                    if ( residual <= 100 || (residual % 100 === 0 && residual < 1000) || (residual % 1000 === 0 && residual < 10000) || (residual % 10000 === 0 && residual < 100000) || residual % 100000 === 0 ) {
+                    if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || ( (residual % 1000 === 0) && (residual < 100000 || residual < 10000) ) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
                         residualInWords = hundredsUnitsSeparator + residualInWords;     
-console.log(`residualInWords === ${residualInWords}`);
                         numberInWords = `${millionsPositiveDecimalIntegerInWords} million ` + residualInWords;
                     } else {
                         numberInWords = `${millionsPositiveDecimalIntegerInWords} million` + millionsThousandsSeparator + residualInWords;
@@ -375,7 +376,7 @@ console.log(`residualInWords === ${residualInWords}`);
                     let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
 
                     // This test determines whether the word 'and' is required in the English words for the residual.
-                    if ( residual <= 100 || (residual % 100 === 0 && residual < 1000) || (residual % 1000 === 0 && residual < 10000) || (residual % 10000 === 0 && residual < 100000) || (residual % 100000 === 0 && residual < 1000000) ) {
+                    if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || ( (residual % 1000 === 0) && (residual < 100000 || residual < 10000) ) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
                         residualInWords = hundredsUnitsSeparator + residualInWords;     
                         numberInWords = `${firstTwoDigits} million ` + residualInWords;
                     } else {
@@ -402,7 +403,7 @@ console.log(`residualInWords === ${residualInWords}`);
                     let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
 
                     // This test determines whether the word 'and' is required in the English words for the residual.
-                    if ( residual <= 100 || (residual % 100 === 0 && residual < 1000) || (residual % 1000 === 0 && residual < 10000) || (residual % 10000 === 0 && residual < 100000) || (residual % 100000 === 0 && residual < 1000000) ) {
+                    if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || ( (residual % 1000 === 0) && (residual < 100000 || residual < 10000) ) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
                         residualInWords = hundredsUnitsSeparator + residualInWords;     
                         numberInWords = `${firstThreeDigits} million ` + residualInWords;
                     } else {
