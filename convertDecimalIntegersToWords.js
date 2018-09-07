@@ -23,9 +23,11 @@ class PositiveDecimalIntegerInWords {
     }
 
     getCharacteristicAndPowerExponent() {
-        let self = this;
+        const self = this;
 
-        let characteristicPowerExponent = { characteristic: 0, powerExponent: 0 };
+        const unsetValue = -1;
+
+        let characteristicPowerExponent = { characteristic: unsetValue, powerExponent: unsetValue };
         let powerNotFound = true;
     
         for ( let powerOfTenExponent = 0; powerOfTenExponent < 9 && powerNotFound; powerOfTenExponent++ ) {
@@ -39,7 +41,7 @@ class PositiveDecimalIntegerInWords {
                 powerNotFound = false;
             }
         }
-    
+
         return characteristicPowerExponent;
     } 
 
@@ -151,14 +153,16 @@ class PositiveDecimalIntegerInWords {
     }
 
     getOrderOfTensWord(tensNumber) {
+        const self = this;
+
         let orderOfTensWords = '';
 
         const teensRE = /^1/;
 
         if ( teensRE.test(tensNumber) ) {
-            orderOfTensWords = this.getTeensWord(tensNumber);
+            orderOfTensWords = self.getTeensWord(tensNumber);
         } else {
-            orderOfTensWords = this.getTensWord(tensNumber);
+            orderOfTensWords = self.getTensWord(tensNumber);
         }
 
         return orderOfTensWords;
@@ -209,211 +213,234 @@ class PositiveDecimalIntegerInWords {
         //                      unwinds recursion and returns string 'five hundred and seventy' that is concatenation 'five hundred and ' +  'seventy'
         //      unwinds recursion and returns string 'fourty three thousand, five hundred and seventy' that is concatenation 'fourty three thousand, ' + 'five hundred and seventy'
         //    This terminates the recursion and the final English words expression is 'fourty three thousand, five hundred and seventy'.
+        //
+        // 5) The output is presented in JSON format.  The JSON format is a standardised format for passing data from one service to another which justifies it as
+        //    being the output format used.
+        //
+        //    Example:
+        //    node ./convertDecimalIntegersToWords.js 999999999 999999991 999999901 999999001 999990001 999900001 999000001 990000001 900000001
+	//    { "decimalInteger": "999999999", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and ninety nine" }
+	//    { "decimalInteger": "999999991", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and ninety one" }
+	//    { "decimalInteger": "999999901", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and one" }
+	//    { "decimalInteger": "999999001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand and one" }
+	//    { "decimalInteger": "999990001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety thousand and one" }
+	//    { "decimalInteger": "999900001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred thousand and one" }
+	//    { "decimalInteger": "999000001", "decimalIntegerInWords": "nine hundred and ninety nine million and one" }
+	//    { "decimalInteger": "990000001", "decimalIntegerInWords": "nine hundred and ninety million and one" }
+	//    { "decimalInteger": "900000001", "decimalIntegerInWords": "nine hundred million and one" }
 
-
+        const self = this;
+ 
         let numberInWords = '';
 
-        let magnitudePower = this.getCharacteristicAndPowerExponent();
+        let magnitudePower = self.getCharacteristicAndPowerExponent();
         let characteristic = magnitudePower.characteristic;
         let powerTenExponent = magnitudePower.powerExponent;
 
-        // The residual variable is used to determine whether there should be a recursion for its positive decimal integer value.  Apart from case 0: of the switch
-        // statement, there will be a recursive call for the value of residual if, and only if, the value of residual is non-zero (residual > 0).
-        let residual = this.decimalNumber - characteristic * Math.pow(10, powerTenExponent);
+        const unsetValue = -1;
 
-        // These variables are used in constructing the English words that express the positive decimal integer.
-        let firstTwoDigits = '';
-        let firstThreeDigits = '';
+        if ( characteristic !== unsetValue && powerTenExponent !== unsetValue ) {
+            // The residual variable is used to determine whether there should be a recursion for its positive decimal integer value.  Apart from case 0: of the switch
+            // statement, there will be a recursive call for the value of residual if, and only if, the value of residual is non-zero (residual > 0).
+            let residual = self.decimalNumber - characteristic * Math.pow(10, powerTenExponent);
+    
+            // These variables are used in constructing the English words that express the positive decimal integer.
+            let firstTwoDigits = '';
+            let firstThreeDigits = '';
+    
+            let tensPositiveDecimalIntegerInWords = '';
+            let thousandsPositiveDecimalIntegerInWords = '';
+    
+            // These are the separators used in the English words to separate the hundreds, thousand and millions from one another and the units.
+            const hundredsUnitsSeparator = 'and ';  // Separates the hundreds from the units, or if there are no hundreds, the units from the next highest digit.
+            const millionsThousandsSeparator = ', ';  // Separates the millions from the thousands and the thousands from the hundreds.
+    
+            switch (powerTenExponent) {
+    
+                case 0:  // This condition when powerTenExponent === 0 exits the recursion.  This case deals with single digit positive decimal integers, that is the units.
+                    numberInWords = self.getUnitsWord(characteristic);
+                    break;
+    
+                case 1: // This case processes positive decimal integers in the tens (10s).
+                    const tensWord = self.getTensWord(characteristic);
 
-        let tensPositiveDecimalIntegerInWords = '';
-        let thousandsPositiveDecimalIntegerInWords = '';
-
-        // These are the separators used in the English words to separate the hundreds, thousand and millions from one another and the units.
-        const hundredsUnitsSeparator = 'and ';  // Separates the hundreds from the units, or if there are no hundreds, the units from the next highest digit.
-        const millionsThousandsSeparator = ', ';  // Separates the millions from the thousands and the thousands from the hundreds.
-
-        switch (powerTenExponent) {
-
-            case 0:  // This condition when powerTenExponent === 0 exits the recursion.  This case deals with single digit positive decimal integers, that is the units.
-                numberInWords = this.getUnitsWord(characteristic);
-                break;
-
-            case 1: // This case processes positive decimal integers in the tens (10s).
-                const tensWord = this.getTensWord(characteristic);
-                if ( characteristic === 1 ) {
-                    numberInWords = this.getTeensWord(this.decimalNumber);
-                } else {
-                    residual = this.decimalNumber - characteristic * Math.pow(10, powerTenExponent);
+                    if ( characteristic === 1 ) {
+                        numberInWords = self.getTeensWord(self.decimalNumber);
+                    } else {
+                        residual = self.decimalNumber - characteristic * Math.pow(10, powerTenExponent);
+                        if ( residual > 0 ) {
+                            // The residual decimal integer is dealt with by a recursive call.  In this case the recursion deals with the units which then terminates the recursion.
+                            const residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
+        
+                            numberInWords = tensWord + ' ' + residualInWords;
+                        } else {
+                            // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
+                            numberInWords = tensWord;
+                        }
+                    }
+                    break;
+    
+                case 2: // This case processes positive decimal integers in the hundreds (100s).
+                    tensPositiveDecimalIntegerInWords = self.getUnitsWord(characteristic);
+    
                     if ( residual > 0 ) {
-                        // The residual decimal integer is dealt with by a recursive call.  In this case the recursion deals with the units which then terminates the recursion.
+                        // The residual decimal integer is dealt with by a recursive call.
                         const residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
     
-                        numberInWords = tensWord + ' ' + residualInWords;
+                        // Remark: the hundreds are a special cases in that they need the word 'and' to be suffixed before the teens or units in English.
+                        numberInWords = `${tensPositiveDecimalIntegerInWords} hundred ${hundredsUnitsSeparator}` + residualInWords;
+    
                     } else {
                         // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
-                        numberInWords = tensWord;
+                        const characteristicString = self.getUnitsWord(characteristic);
+                        numberInWords = `${characteristicString} hundred`;
                     }
-                }
-                break;
+                    break;
+    
+                case 3: // Similar to case 6:.  This case processes positive decimal integers in the thousands (1000s).
+                    thousandsPositiveDecimalIntegerInWords = self.getUnitsWord(characteristic);
 
-            case 2: // This case processes positive decimal integers in the hundreds (100s).
-                tensPositiveDecimalIntegerInWords = this.getUnitsWord(characteristic);
-
-                if ( residual > 0 ) {
-                    // The residual decimal integer is dealt with by a recursive call.
-                    const residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
-
-                    // Remark: the hundreds are a special cases in that they need the word 'and' to be suffixed before the teens or units in English.
-                    numberInWords = `${tensPositiveDecimalIntegerInWords} hundred ${hundredsUnitsSeparator}` + residualInWords;
-
-                } else {
-                    // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
-                    const characteristicString = this.getUnitsWord(characteristic);
-                    numberInWords = `${characteristicString} hundred`;
-                }
-                break;
-
-            case 3: // Similar to case 6:.  This case processes positive decimal integers in the thousands (1000s).
-                thousandsPositiveDecimalIntegerInWords = this.getUnitsWord(characteristic);
-                if ( residual > 0 ) {
-                    // The residual decimal integer is dealt with by a recursive call.
-                    let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
-                
-                    // This test determines whether the word 'and' is required in the English words for the residual.
-                    if ( residual <= 100 || residual % 100 === 0 ) {
-                        residualInWords = hundredsUnitsSeparator + residualInWords;     
-                        numberInWords = `${thousandsPositiveDecimalIntegerInWords} thousand ` + residualInWords;
+                    if ( residual > 0 ) {
+                        // The residual decimal integer is dealt with by a recursive call.
+                        let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
+                    
+                        // This test determines whether the word 'and' is required in the English words for the residual.
+                        if ( residual <= 100 || residual % 100 === 0 ) {
+                            residualInWords = hundredsUnitsSeparator + residualInWords;     
+                            numberInWords = `${thousandsPositiveDecimalIntegerInWords} thousand ` + residualInWords;
+                        } else {
+                            numberInWords = `${thousandsPositiveDecimalIntegerInWords} thousand` + millionsThousandsSeparator + residualInWords;
+                        }
                     } else {
-                        numberInWords = `${thousandsPositiveDecimalIntegerInWords} thousand` + millionsThousandsSeparator + residualInWords;
+                        // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
+                        numberInWords = `${thousandsPositiveDecimalIntegerInWords} thousand`;
                     }
-                } else {
-                    // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
-                    numberInWords = `${thousandsPositiveDecimalIntegerInWords} thousand`;
-                }
-                break;
-
-            case 4: // Similar to case 7: (hundredsUnitsSeparator).  This case processes positive decimal integers in the tens of thousands (10s of 1000s).
-                firstTwoDigits = this.decimalNumber.toString().substring(0, 2);
-                residual = this.decimalNumber - Number(firstTwoDigits) * Math.pow(10, powerTenExponent - 1);  // Subtracting 1 in the power is the same as division by 10.
-                firstTwoDigits = new PositiveDecimalIntegerInWords(Number(firstTwoDigits)).toWords();
-
-                if ( residual > 0 ) {
-                    // The residual decimal integer is dealt with by a recursive call.
-                    let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
-
-                    numberInWords = `${firstTwoDigits} million` + millionsThousandsSeparator + residualInWords;
-               
-                    // This test determines whether the word 'and' is required in the English words for the residual.
-                    // The same as for the thousands (1000s) because the residual occurs after the first two digits.
-                    if ( residual <= 100 || (residual % 100 === 0 && residual % 1000 !== 0) ) {
-                        residualInWords = hundredsUnitsSeparator + residualInWords;     
-                        numberInWords = `${firstTwoDigits} thousand ` + residualInWords;
-                    } else {
-                        numberInWords = `${firstTwoDigits} thousand` + millionsThousandsSeparator + residualInWords;
-                    }
-                } else {
-                    // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
-                    numberInWords = `${firstTwoDigits} thousand`;
-                }
-                break;
-
-            case 5: // Similar to case 8: (recursive call for hundreds).  This case processes positive integers in the hundreds of thousands (100s of 1000s).
-                firstThreeDigits = this.decimalNumber.toString().substring(0, 3);
-
-                residual = this.decimalNumber - Number(firstThreeDigits) * Math.pow(10, powerTenExponent - 2);  // Subtracting 2 in the power is the same as division by 100.
-
-                // The first three digits will be in the hundreds, as this case is for the hundreds of thousands, and this means the word 'and' may have to be included in the words.
-                // The hundreds are dealt with by a recursive call on the first three digits.
-                firstThreeDigits = new PositiveDecimalIntegerInWords(Number(firstThreeDigits)).toWords();
-
-                if ( residual > 0 ) {
-                    // The residual decimal integer is dealt with by a recursive call.
-                    let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
-
-                    // This test determines whether the word 'and' is required in the English words for the residual.
-                    // The same as for the thousands (1000s) because the residual occurs after the first three digits.
-                    if ( residual <= 100 || (residual % 100 === 0 && residual % 1000 !== 0) ) {
-                        residualInWords = hundredsUnitsSeparator + residualInWords;     
-                        numberInWords = `${firstThreeDigits} thousand ` + residualInWords;
-                    } else {
-                        numberInWords = `${firstThreeDigits} thousand` + millionsThousandsSeparator + residualInWords;
-                    }
-                } else {
-                    // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
-                    numberInWords = `${firstThreeDigits} thousand`;
-                }
-                break;
-
-            case 6: // Similar to case 3:.  This case processes positive integers in the millions (1000000s).
-                const millionsPositiveDecimalIntegerInWords = this.getUnitsWord(characteristic);
-
-                if ( residual > 0 ) {
-                    // The residual decimal integer is dealt with by a recursive call.
-                    let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
-
-                    // This test determines whether the word 'and' is required in the English words for the residual.
-                    if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || ( (residual % 1000 === 0) && (residual < 100000 || residual < 10000) ) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
-                        residualInWords = hundredsUnitsSeparator + residualInWords;     
-                        numberInWords = `${millionsPositiveDecimalIntegerInWords} million ` + residualInWords;
-                    } else {
-                        numberInWords = `${millionsPositiveDecimalIntegerInWords} million` + millionsThousandsSeparator + residualInWords;
-                    }
-                } else {
-                    // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
-                    numberInWords = `${millionsPositiveDecimalIntegerInWords} million`;
-                }
-                break;
-
-            case 7: // Similar to case 4: (hundredsUnitsSeparator).  This case processes positive integers in the tens of millions (10s of 1000000s).
-                firstTwoDigits = this.decimalNumber.toString().substring(0, 2);
-
-                residual = this.decimalNumber - Number(firstTwoDigits) * Math.pow(10, powerTenExponent - 1);  // Subtracting 1 in the power is the same as division by 10.
-
-                firstTwoDigits = new PositiveDecimalIntegerInWords(Number(firstTwoDigits)).toWords();
-
-                if ( residual > 0 ) {
-                    // The residual decimal integer is dealt with by a recursive call.
-                    let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
-
-                    // This test determines whether the word 'and' is required in the English words for the residual.
-                    if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || ( (residual % 1000 === 0) && (residual < 100000 || residual < 10000) ) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
-                        residualInWords = hundredsUnitsSeparator + residualInWords;     
-                        numberInWords = `${firstTwoDigits} million ` + residualInWords;
-                    } else {
+                    break;
+    
+                case 4: // Similar to case 7: (hundredsUnitsSeparator).  This case processes positive decimal integers in the tens of thousands (10s of 1000s).
+                    firstTwoDigits = self.decimalNumber.toString().substring(0, 2);
+                    residual = self.decimalNumber - Number(firstTwoDigits) * Math.pow(10, powerTenExponent - 1);  // Subtracting 1 in the power is the same as division by 10.
+                    firstTwoDigits = new PositiveDecimalIntegerInWords(Number(firstTwoDigits)).toWords();
+    
+                    if ( residual > 0 ) {
+                        // The residual decimal integer is dealt with by a recursive call.
+                        let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
+    
                         numberInWords = `${firstTwoDigits} million` + millionsThousandsSeparator + residualInWords;
-                    }
-                } else {
-                    // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
-                    numberInWords = `${firstTwoDigits} million`;
-                }
-                break;
-
-            case 8: // Similar to case 5: (recursive call for hundreds).  This case processes positive integers in the hundreds of millions (100s of 1000000s).
-                const hundredMillionsPositiveDecimalIntegerInWords = this.getUnitsWord(characteristic);
-                firstThreeDigits = this.decimalNumber.toString().substring(0, 3);
-
-                residual = this.decimalNumber - Number(firstThreeDigits) * Math.pow(10, powerTenExponent - 2);  // Subtracting 2 in the power is the same as division by 100.
-
-                // The first three digits will be in the hundreds, as this case is for the hundreds of millions, and this means the word 'and' may have to be included in the words.
-                // The hundreds are dealt with by a recursive call on the first three digits.
-                firstThreeDigits = new PositiveDecimalIntegerInWords(Number(firstThreeDigits)).toWords();
-
-                if ( residual > 0 ) {
-                    // The residual decimal integer is dealt with by a recursive call.
-                    let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
-
-                    // This test determines whether the word 'and' is required in the English words for the residual.
-                    if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || ( (residual % 1000 === 0) && (residual < 100000 || residual < 10000) ) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
-                        residualInWords = hundredsUnitsSeparator + residualInWords;     
-                        numberInWords = `${firstThreeDigits} million ` + residualInWords;
+                   
+                        // This test determines whether the word 'and' is required in the English words for the residual.
+                        // The same as for the thousands (1000s) because the residual occurs after the first two digits.
+                        if ( residual <= 100 || (residual % 100 === 0 && residual % 1000 !== 0) ) {
+                            residualInWords = hundredsUnitsSeparator + residualInWords;     
+                            numberInWords = `${firstTwoDigits} thousand ` + residualInWords;
+                        } else {
+                            numberInWords = `${firstTwoDigits} thousand` + millionsThousandsSeparator + residualInWords;
+                        }
                     } else {
-                        numberInWords = `${firstThreeDigits} million` + millionsThousandsSeparator + residualInWords;
+                        // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
+                        numberInWords = `${firstTwoDigits} thousand`;
                     }
-                } else {
-                    // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
-                    numberInWords = `${firstThreeDigits} million`;
-                }
-                break;
+                    break;
+    
+                case 5: // Similar to case 8: (recursive call for hundreds).  This case processes positive integers in the hundreds of thousands (100s of 1000s).
+                    firstThreeDigits = self.decimalNumber.toString().substring(0, 3);
+    
+                    residual = self.decimalNumber - Number(firstThreeDigits) * Math.pow(10, powerTenExponent - 2);  // Subtracting 2 in the power is the same as division by 100.
+    
+                    // The first three digits will be in the hundreds, as this case is for the hundreds of thousands, and this means the word 'and' may have to be included in the words.
+                    // The hundreds are dealt with by a recursive call on the first three digits.
+                    firstThreeDigits = new PositiveDecimalIntegerInWords(Number(firstThreeDigits)).toWords();
+    
+                    if ( residual > 0 ) {
+                        // The residual decimal integer is dealt with by a recursive call.
+                        let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
+    
+                        // This test determines whether the word 'and' is required in the English words for the residual.
+                        // The same as for the thousands (1000s) because the residual occurs after the first three digits.
+                        if ( residual <= 100 || (residual % 100 === 0 && residual % 1000 !== 0) ) {
+                            residualInWords = hundredsUnitsSeparator + residualInWords;     
+                            numberInWords = `${firstThreeDigits} thousand ` + residualInWords;
+                        } else {
+                            numberInWords = `${firstThreeDigits} thousand` + millionsThousandsSeparator + residualInWords;
+                        }
+                    } else {
+                        // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
+                        numberInWords = `${firstThreeDigits} thousand`;
+                    }
+                    break;
+    
+                case 6: // Similar to case 3:.  This case processes positive integers in the millions (1000000s).
+                    const millionsPositiveDecimalIntegerInWords = self.getUnitsWord(characteristic);
+    
+                    if ( residual > 0 ) {
+                        // The residual decimal integer is dealt with by a recursive call.
+                        let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
+    
+                        // This test determines whether the word 'and' is required in the English words for the residual.
+                        if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || (residual % 1000 === 0 && residual < 100000) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
+                            residualInWords = hundredsUnitsSeparator + residualInWords;     
+                            numberInWords = `${millionsPositiveDecimalIntegerInWords} million ` + residualInWords;
+                        } else {
+                            numberInWords = `${millionsPositiveDecimalIntegerInWords} million` + millionsThousandsSeparator + residualInWords;
+                        }
+                    } else {
+                        // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
+                        numberInWords = `${millionsPositiveDecimalIntegerInWords} million`;
+                    }
+                    break;
+    
+                case 7: // Similar to case 4: (hundredsUnitsSeparator).  This case processes positive integers in the tens of millions (10s of 1000000s).
+                    firstTwoDigits = self.decimalNumber.toString().substring(0, 2);
+    
+                    residual = self.decimalNumber - Number(firstTwoDigits) * Math.pow(10, powerTenExponent - 1);  // Subtracting 1 in the power is the same as division by 10.
+    
+                    firstTwoDigits = new PositiveDecimalIntegerInWords(Number(firstTwoDigits)).toWords();
+    
+                    if ( residual > 0 ) {
+                        // The residual decimal integer is dealt with by a recursive call.
+                        let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
+    
+                        // This test determines whether the word 'and' is required in the English words for the residual.
+                        if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || (residual % 1000 === 0 && residual < 100000) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
+                            residualInWords = hundredsUnitsSeparator + residualInWords;     
+                            numberInWords = `${firstTwoDigits} million ` + residualInWords;
+                        } else {
+                            numberInWords = `${firstTwoDigits} million` + millionsThousandsSeparator + residualInWords;
+                        }
+                    } else {
+                        // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
+                        numberInWords = `${firstTwoDigits} million`;
+                    }
+                    break;
+    
+                case 8: // Similar to case 5: (recursive call for hundreds).  This case processes positive integers in the hundreds of millions (100s of 1000000s).
+                    const hundredMillionsPositiveDecimalIntegerInWords = self.getUnitsWord(characteristic);
+                    firstThreeDigits = self.decimalNumber.toString().substring(0, 3);
+    
+                    residual = self.decimalNumber - Number(firstThreeDigits) * Math.pow(10, powerTenExponent - 2);  // Subtracting 2 in the power is the same as division by 100.
+    
+                    // The first three digits will be in the hundreds, as this case is for the hundreds of millions, and this means the word 'and' may have to be included in the words.
+                    // The hundreds are dealt with by a recursive call on the first three digits.
+                    firstThreeDigits = new PositiveDecimalIntegerInWords(Number(firstThreeDigits)).toWords();
+    
+                    if ( residual > 0 ) {
+                        // The residual decimal integer is dealt with by a recursive call.
+                        let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
+    
+                        // This test determines whether the word 'and' is required in the English words for the residual.
+                        if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || (residual % 1000 === 0 && residual < 100000) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
+                            residualInWords = hundredsUnitsSeparator + residualInWords;     
+                            numberInWords = `${firstThreeDigits} million ` + residualInWords;
+                        } else {
+                            numberInWords = `${firstThreeDigits} million` + millionsThousandsSeparator + residualInWords;
+                        }
+                    } else {
+                        // If the residual is zero, then there are no more non-zero digits in the number, therefore end the recursion.
+                        numberInWords = `${firstThreeDigits} million`;
+                    }
+                    break;
+            }
+    
         }
 
         return numberInWords;
