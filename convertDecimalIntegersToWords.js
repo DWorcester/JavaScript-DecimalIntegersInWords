@@ -261,7 +261,8 @@ class PositiveDecimalIntegerInWords {
                     numberInWords = self.getUnitsWord(characteristic);
                     break;
     
-                case 1: // This case processes positive decimal integers in the tens (10s).
+                case 1: // This case processes positive decimal integers in the tens (10s).  It is called recursively by case 4, the tens of thousands, and
+                        // case 7 for the tens of millions; in each of these cases the recursion is on the first two decimal digits (10s).
                     const tensWord = self.getTensWord(characteristic);
 
                     if ( characteristic === 1 ) {
@@ -280,7 +281,8 @@ class PositiveDecimalIntegerInWords {
                     }
                     break;
     
-                case 2: // This case processes positive decimal integers in the hundreds (100s).
+                case 2: // This case processes positive decimal integers in the hundreds (100s).  It is called recursively by case 5, the hundreds of thousands, and
+                        // case 8 for the hundreds of millions; in each of these cases the recursion is on the first three decimal digits (100s).
                     tensPositiveDecimalIntegerInWords = self.getUnitsWord(characteristic);
     
                     if ( residual > 0 ) {
@@ -317,7 +319,7 @@ class PositiveDecimalIntegerInWords {
                     }
                     break;
     
-                case 4: // Similar to case 7: (hundredsUnitsSeparator).  This case processes positive decimal integers in the tens of thousands (10s of 1000s).
+                case 4: // Similar to case 7: (recursive call for tens).  This case processes positive decimal integers in the tens of thousands (10s of 1000s).
                     firstTwoDigits = self.decimalNumber.toString().substring(0, 2);
                     residual = self.decimalNumber - Number(firstTwoDigits) * Math.pow(10, powerTenExponent - 1);  // Subtracting 1 in the power is the same as division by 10.
                     firstTwoDigits = new PositiveDecimalIntegerInWords(Number(firstTwoDigits)).toWords();
@@ -389,7 +391,7 @@ class PositiveDecimalIntegerInWords {
                     }
                     break;
     
-                case 7: // Similar to case 4: (hundredsUnitsSeparator).  This case processes positive integers in the tens of millions (10s of 1000000s).
+                case 7: // Similar to case 4: (recursive call for tens).  This case processes positive integers in the tens of millions (10s of 1000000s).
                     firstTwoDigits = self.decimalNumber.toString().substring(0, 2);
     
                     residual = self.decimalNumber - Number(firstTwoDigits) * Math.pow(10, powerTenExponent - 1);  // Subtracting 1 in the power is the same as division by 10.
@@ -456,34 +458,26 @@ const exitStatusInvalidParameter = 2;
 
 let exitStatus = exitStatusSuccess;
 
+let decimalPositiveIntegers = [];
+
 if ( process.argv.length > 2 ) {
     // Arguments have been passed, therefore process them.
-    const argList = process.argv.slice(2);
-    argList.forEach(function(decimalInteger) {
-        try {
-            const decimalIntegerValue = new PositiveDecimalIntegerInWords(decimalInteger);
-            const decimalIntegerInWords = decimalIntegerValue.toWords();
-    
-            console.log(`{ "decimalInteger": "${decimalInteger}", "decimalIntegerInWords": "${decimalIntegerInWords}" }`);
-        }
-        catch ( errorParameterMessage ) {
-            console.error(errorParameterMessage.message);
-        }
-    });
+    decimalPositiveIntegers = process.argv.slice(2);
 } else {
     // Test positive decimal integers.
-    const decimalIntegers = [ '115', '115000', '115000000','115', '1151', '115001', '115000001', '230', '230000', '230000000', '231', '230001', '230000001', '115000', '230000', '345000', '460000', '460000000', '575000', '575000000', '1', '11', '111', '1111', '11111', '111111', '1111111', '11111111', '111111111', '99911', '999111', '9991111', '99911111', '999111111', '999', '9999', '11199', '111999', '1119999', '111999999', '333333333' ];
-    decimalIntegers.forEach(function(decimalInteger) {
-        try {
-            const decimalIntegerValue = new PositiveDecimalIntegerInWords(decimalInteger);
-            const decimalIntegerInWords = decimalIntegerValue.toWords();
-    
-            console.log(`{ "decimalInteger": "${decimalInteger}", "decimalIntegerInWords": "${decimalIntegerInWords}" }`);
-        }
-        catch ( errorParameterMessage ) {
-            console.error(errorParameterMessage.message);
-        }
-    });
+    decimalPositiveIntegers = [ '115', '115000', '115000000','115', '1151', '115001', '115000001', '230', '230000', '230000000', '231', '230001', '230000001', '115000', '230000', '345000', '460000', '460000000', '575000', '575000000', '1', '11', '111', '1111', '11111', '111111', '1111111', '11111111', '111111111', '99911', '999111', '9991111', '99911111', '999111111', '999', '9999', '11199', '111999', '1119999', '111999999', '333333333' ];
 }
+
+decimalPositiveIntegers.forEach(function(decimalInteger) {
+    try {
+        const decimalIntegerValue = new PositiveDecimalIntegerInWords(decimalInteger);
+        const decimalIntegerInWords = decimalIntegerValue.toWords();
+   
+        console.log(`{ "decimalInteger": "${decimalInteger}", "decimalIntegerInWords": "${decimalIntegerInWords}" }`);
+    }
+    catch ( parametricErrorMessage ) {
+        console.error(parametricErrorMessage.message);
+    }
+});
 
 process.exit(exitStatus);
