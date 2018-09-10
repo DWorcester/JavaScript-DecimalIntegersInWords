@@ -25,12 +25,9 @@ class PositiveDecimalIntegerInWords {
     getCharacteristicAndPowerExponent() {
         const self = this;
 
-        const unsetValue = -1;
-
-        let characteristicPowerExponent = { characteristic: unsetValue, powerExponent: unsetValue };
-        let powerNotFound = true;
+        let characteristicPowerExponent = { characteristic: undefined, powerExponent: undefined };
     
-        for ( let powerOfTenExponent = 0; powerOfTenExponent < 9 && powerNotFound; powerOfTenExponent++ ) {
+        for ( let powerOfTenExponent = 0; powerOfTenExponent < 9; powerOfTenExponent++ ) {
             let x = self.decimalNumber / Math.pow(10, powerOfTenExponent);
     
             let xInt = parseInt(x.toString());
@@ -38,7 +35,7 @@ class PositiveDecimalIntegerInWords {
             if ( 0 <= xInt && xInt < 10 ) {
                 characteristicPowerExponent = { characteristic: xInt, powerExponent: powerOfTenExponent };
     
-                powerNotFound = false;
+                break;
             }
         }
 
@@ -237,9 +234,7 @@ class PositiveDecimalIntegerInWords {
         let characteristic = magnitudePower.characteristic;
         let powerTenExponent = magnitudePower.powerExponent;
 
-        const unsetValue = -1;
-
-        if ( characteristic !== unsetValue && powerTenExponent !== unsetValue ) {
+        if ( typeof characteristic !== 'undefined' && typeof powerTenExponent !== 'undefined' ) {
             // The residual variable is used to determine whether there should be a recursion for its positive decimal integer value.  Apart from case 0: of the switch
             // statement, there will be a recursive call for the value of residual if, and only if, the value of residual is non-zero (residual > 0).
             let residual = self.decimalNumber - characteristic * Math.pow(10, powerTenExponent);
@@ -378,7 +373,7 @@ class PositiveDecimalIntegerInWords {
                         // The residual decimal integer is dealt with by a recursive call.
                         let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
     
-                        // This test determines whether the word 'and' is required in the English words for the residual.
+                        // This test determines whether the word 'and' (hundredsUnitsSeparator) is required in the English words for the residual.
                         if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || (residual % 1000 === 0 && residual < 100000) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
                             residualInWords = hundredsUnitsSeparator + residualInWords;     
                             numberInWords = `${millionsPositiveDecimalIntegerInWords} million ` + residualInWords;
@@ -402,7 +397,7 @@ class PositiveDecimalIntegerInWords {
                         // The residual decimal integer is dealt with by a recursive call.
                         let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
     
-                        // This test determines whether the word 'and' is required in the English words for the residual.
+                        // This test determines whether the word 'and' (hundredsUnitsSeparator) is required in the English words for the residual.
                         if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || (residual % 1000 === 0 && residual < 100000) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
                             residualInWords = hundredsUnitsSeparator + residualInWords;     
                             numberInWords = `${firstTwoDigits} million ` + residualInWords;
@@ -429,7 +424,7 @@ class PositiveDecimalIntegerInWords {
                         // The residual decimal integer is dealt with by a recursive call.
                         let residualInWords = new PositiveDecimalIntegerInWords(residual).toWords();
     
-                        // This test determines whether the word 'and' is required in the English words for the residual.
+                        // This test determines whether the word 'and' (hundredsUnitsSeparator) is required in the English words for the residual.
                         if ( (residual % 100000 === 0 && residual < 1000000) || (residual % 10000 === 0 && residual < 100000) || (residual % 1000 === 0 && residual < 100000) || (residual % 100 === 0 && residual < 1000) || (residual % 10 === 0 && residual < 100) || (residual <= 100) ) {
                             residualInWords = hundredsUnitsSeparator + residualInWords;     
                             numberInWords = `${firstThreeDigits} million ` + residualInWords;
