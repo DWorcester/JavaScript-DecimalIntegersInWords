@@ -6,7 +6,7 @@ class PositiveDecimalIntegerInWords {
         // The constructor stores in this object the positive decimal integer that is required to be converted into words, and throws an exception if there is an error in it.
 
         // This pattern will identify positive decimal integers that are expressed in the exponential E notation, as identified by the presence of e or E.
-        const numberInENotation = /[1-9][0-9]*[Ee][0-9]+/;
+        const numberInENotation = /[0-9]+[Ee][0-9]+/;
 
         // Firstly, test the potential positive decimal integer is a valid number format.  The exceptions thrown result in error messages as follows being output:
         //      Number is not an integer: parameter passed is not a whole number as it has a fractional part: 99.88
