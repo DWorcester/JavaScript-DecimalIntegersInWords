@@ -5,19 +5,42 @@ class PositiveDecimalIntegerInWords {
     constructor(decimalNumerals) {
         // The constructor stores in this object the positive decimal integer that is required to be converted into words, and throws an exception if there is an error in it.
 
-        this.decimalNumber = parseInt(decimalNumerals, 10);
+        // This pattern will identify positive decimal integers that are expressed in the exponential E notation, as identified by the presence of e or E.
+        const numberInENotation = /[1-9][0-9]*[Ee][0-9]+/;
 
-        if ( ! isNaN(decimalNumerals) && 1 <= this.decimalNumber && this.decimalNumber <= 999999999 ) {
-            this.decimalNumerals = decimalNumerals;
+        // Firstly, test the potential positive decimal integer is a valid number format.  The exceptions thrown result in error messages as follows being output:
+        //      Number is not an integer: parameter passed is not a whole number as it has a fractional part: 99.88
+        //      Invalid non-numerical character in parameter: parameter passed is not a positive decimal integer because it contains a character that is not a digit: 99r123
+        if ( ! isNaN(decimalNumerals) && Number.isInteger(Number(decimalNumerals)) ) {
+            this.decimalNumber = parseInt(decimalNumerals, 10);
         } else {
             if ( isNaN(decimalNumerals) ) {
-                exitStatus = exitStatusInvalidParameter;
+                exitStatus = exitStatusNotANumber;
 
-                throw new Error(`Invalid character in parameter: parameter passed is not a positive decimal integer in the range from 1 to 999999999 inclusive for conversion into words: ${decimalNumerals}`);
+                throw new Error(`Invalid non-numerical character in parameter: parameter passed is not a positive decimal integer because it contains a character that is not a digit: ${decimalNumerals}`);
+            } else {
+                exitStatus = exitStatusNotInteger;
+                
+                throw new Error(`Number is not an integer: parameter passed is not a whole number as it has a fractional part: ${decimalNumerals}`);
+            }
+        }
+
+        // Secondly, test that the positive decimal integer is not in exponential format (e.g. 999E3 === 999000 or 999e3 === 999000) and that it is in the required range.
+        // The exceptions thrown result in error messages as follows being output:
+        //      Number in exponential notation: parameter passed is expressed in exponential notation, that is there is an e or E in its representation: 999E3
+        //      Number in exponential notation: parameter passed is expressed in exponential notation, that is there is an e or E in its representation: 1000e3
+        //      Out of range: parameter passed is not a positive decimal integer in the range from 1 to 999999999 inclusive for conversion into English words: 999888777666
+        if ( ! numberInENotation.test(decimalNumerals) && 1 <= this.decimalNumber && this.decimalNumber <= 999999999 ) {
+            this.decimalNumerals = decimalNumerals;
+        } else {
+            if ( numberInENotation.test(decimalNumerals) ) {
+                exitStatus = exitStatusENotation;
+
+                throw new Error(`Number in exponential notation: parameter passed is expressed in exponential notation, that is there is an e or E in its representation: ${decimalNumerals}`);
             } else {
                 exitStatus = exitStatusOutOfRange;
 
-                throw new Error(`Out of range: parameter passed is not a positive decimal integer in the range from 1 to 999999999 inclusive for conversion into words: ${decimalNumerals}`);
+                throw new Error(`Out of range: parameter passed is not a positive decimal integer in the range from 1 to 999999999 inclusive for conversion into English words: ${decimalNumerals}`);
             }
         }
     }
@@ -225,6 +248,17 @@ class PositiveDecimalIntegerInWords {
 	//    { "decimalInteger": "999000001", "decimalIntegerInWords": "nine hundred and ninety nine million and one" }
 	//    { "decimalInteger": "990000001", "decimalIntegerInWords": "nine hundred and ninety million and one" }
 	//    { "decimalInteger": "900000001", "decimalIntegerInWords": "nine hundred million and one" }
+        //
+        // 6) This example exhibits the type of error messages that are output when the corresponding exceptions are thrown:
+        //
+        //      node ./convertDecimalIntegersToWords.js 99.88 99r123 999E3 1000e3 3.141 1E6 999888777666
+        //      Number is not an integer: parameter passed is not a whole number as it has a fractional part: 99.88
+        //      Invalid non-numerical character in parameter: parameter passed is not a positive decimal integer because it contains a character that is not a digit: 99r123
+        //      Number in exponential notation: parameter passed is expressed in exponential notation, that is there is an e or E in its representation: 999E3
+        //      Number in exponential notation: parameter passed is expressed in exponential notation, that is there is an e or E in its representation: 1000e3
+        //      Number is not an integer: parameter passed is not a whole number as it has a fractional part: 3.141
+        //      Number in exponential notation: parameter passed is expressed in exponential notation, that is there is an e or E in its representation: 1E6
+        //      Out of range: parameter passed is not a positive decimal integer in the range from 1 to 999999999 inclusive for conversion into English words: 999888777666
 
         const self = this;
  
@@ -449,7 +483,9 @@ class PositiveDecimalIntegerInWords {
 const exitStatusSuccess = 0;
 // These constants are used in the constructor to reset the exit status (variable: exitStatus) to communicate any error in the argument(s) passed to the constructor as its input.
 const exitStatusOutOfRange = 1;
-const exitStatusInvalidParameter = 2;
+const exitStatusNotANumber = 2;
+const exitStatusENotation = 3;
+const exitStatusNotInteger = 4;
 
 let exitStatus = exitStatusSuccess;
 
