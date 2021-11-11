@@ -44,6 +44,14 @@ It is recommended to use the __Jest__ unit testing framework.  The unit test of 
 npm install --save-dev jest
 ```
 
+In the file __package.json__ in the project folder, ensure the following entry is in place:
+
+```
+  "scripts": {
+    "test": "jest"
+  }
+ ```
+
 ## Example Usage
 
 This repo contains a __Node__ script called __convertDecimalIntegersToWords.js__, which can be run using the __Node__ server as follows:
