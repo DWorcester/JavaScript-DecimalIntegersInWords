@@ -38,7 +38,7 @@ In development it is usual to unit test new functional behaviour, therefore it i
 
 ### Unit Testing
 
-It is recommended to use the __Jest__ unit testing framework.  The unit test of the adapter comes ready packaged with a __Jest__ unit test in the `__test__` folder.  This can be done in the project folder by installing the Jest package:
+It is recommended to use the __Jest__ unit testing framework.  The unit test of the adapter comes ready packaged with a __Jest__ unit test in the `__test__` folder.  This can be done in the project folder by installing the __Jest__ package:
 
 ```
 npm install --save-dev jest
@@ -50,6 +50,7 @@ This repo contains a __Node__ script called __convertDecimalIntegersToWords.js__
 
 ```
 node ./convertDecimalIntegersToWords.js 999999999 999999991 999999901 999999001 999990001 999900001 999000001 990000001 900000001
+
 { "decimalInteger": "999999999", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and ninety nine" }
 { "decimalInteger": "999999991", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and ninety one" }
 { "decimalInteger": "999999901", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and one" }
