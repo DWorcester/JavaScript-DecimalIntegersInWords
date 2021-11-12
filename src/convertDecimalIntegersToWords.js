@@ -480,11 +480,20 @@ class PositiveDecimalIntegerInWords {
 }
 
 
-const convertDecimalIntegersToWords = (positiveInteger) => {
-    let decimalPositiveIntegers = [ positiveInteger ];
-    let decimalPositiveIntegersInWords = [];
+const convertDecimalIntegersToWords = (possiblePositiveIntegers) => {
+    let decimalPositiveIntegers = [];
 
-    let retValue = undefined;
+    if ( Array.isArray(possiblePositiveIntegers) ) {
+	possiblePositiveIntegers.forEach( possiblePositiveInteger => {
+	    if ( Number.isInteger(Number(possiblePositiveInteger)) && Number(possiblePositiveInteger) > 0 ) {
+		decimalPositiveIntegers.push( Number(possiblePositiveInteger) );
+	    }
+	} );
+    } else if ( Number.isInteger(Number(possiblePositiveIntegers)) && Number(possiblePositiveIntegers) > 0 ) { 
+	decimalPositiveIntegers = [ Number(possiblePositiveIntegers) ];
+    }
+
+    let decimalPositiveIntegersInWords = [];
 
     decimalPositiveIntegers.forEach(function(decimalInteger) {
         try {
@@ -494,14 +503,12 @@ const convertDecimalIntegersToWords = (positiveInteger) => {
     	    const decimalIntegerInWordsObj = { decimalInteger: decimalInteger, decimalIntegerInWords: decimalIntegerInWords };
     
     	    decimalPositiveIntegersInWords.push(decimalIntegerInWordsObj);
-
-	    retValue = decimalIntegerInWords;
         }
         catch ( parametricErrorMessage ) {
         }
     });
 
-    return retValue;
+    return decimalPositiveIntegersInWords;
 };
 
 

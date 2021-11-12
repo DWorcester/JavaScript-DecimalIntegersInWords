@@ -54,20 +54,12 @@ In the file __package.json__ in the project folder, ensure the following entry i
 
 ## Example Usage
 
-This repo contains a __Node__ script called __convertDecimalIntegersToWords.js__, which can be run using the __Node__ server as follows:
+This repo contains a __Node__ script called __exampleUsage.js__, which can be run using the __Node__ server as follows:
 
 ```
-node ./convertDecimalIntegersToWords.js 999999999 999999991 999999901 999999001 999990001 999900001 999000001 990000001 900000001
+node ./exampleUsage.js
 
-{ "decimalInteger": "999999999", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and ninety nine" }
-{ "decimalInteger": "999999991", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and ninety one" }
-{ "decimalInteger": "999999901", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and one" }
-{ "decimalInteger": "999999001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand and one" }
-{ "decimalInteger": "999990001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety thousand and one" }
-{ "decimalInteger": "999900001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred thousand and one" }
-{ "decimalInteger": "999000001", "decimalIntegerInWords": "nine hundred and ninety nine million and one" }
-{ "decimalInteger": "990000001", "decimalIntegerInWords": "nine hundred and ninety million and one" }
-{ "decimalInteger": "900000001", "decimalIntegerInWords": "nine hundred million and one" }
+nine hundred and ninety nine million, nine hundred thousand and one
 ```
 
-As can be seen, the adapter takes positive integers as arguments and then converts them into their word representation (see property: __decimalIntegerInWords__ in the objects), with the usual punctuation. 
+As can be seen, the adapter takes positive integers as arguments and then converts them into their word representation (property: __decimalIntegerInWords__ in the objects), with the usual punctuation. 
