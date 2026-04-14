@@ -239,15 +239,15 @@ class PositiveDecimalIntegerInWords {
         //
         //    Example:
         //    node ./convertDecimalIntegersToWords.js 999999999 999999991 999999901 999999001 999990001 999900001 999000001 990000001 900000001
-	//    { "decimalInteger": "999999999", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and ninety nine" }
-	//    { "decimalInteger": "999999991", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and ninety one" }
-	//    { "decimalInteger": "999999901", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and one" }
-	//    { "decimalInteger": "999999001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand and one" }
-	//    { "decimalInteger": "999990001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety thousand and one" }
-	//    { "decimalInteger": "999900001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred thousand and one" }
-	//    { "decimalInteger": "999000001", "decimalIntegerInWords": "nine hundred and ninety nine million and one" }
-	//    { "decimalInteger": "990000001", "decimalIntegerInWords": "nine hundred and ninety million and one" }
-	//    { "decimalInteger": "900000001", "decimalIntegerInWords": "nine hundred million and one" }
+	    //    { "decimalInteger": "999999999", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and ninety nine" }
+	    //    { "decimalInteger": "999999991", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and ninety one" }
+	    //    { "decimalInteger": "999999901", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand, nine hundred and one" }
+	    //    { "decimalInteger": "999999001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety nine thousand and one" }
+	    //    { "decimalInteger": "999990001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred and ninety thousand and one" }
+	    //    { "decimalInteger": "999900001", "decimalIntegerInWords": "nine hundred and ninety nine million, nine hundred thousand and one" }
+	    //    { "decimalInteger": "999000001", "decimalIntegerInWords": "nine hundred and ninety nine million and one" }
+	    //    { "decimalInteger": "990000001", "decimalIntegerInWords": "nine hundred and ninety million and one" }
+	    //    { "decimalInteger": "900000001", "decimalIntegerInWords": "nine hundred million and one" }
         //
         // 6) This example exhibits the type of error messages that are output when the corresponding exceptions are thrown:
         //
