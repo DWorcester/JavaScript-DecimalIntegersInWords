@@ -484,13 +484,13 @@ const convertDecimalIntegersToWords = (possiblePositiveIntegers) => {
     let decimalPositiveIntegers = [];
 
     if ( Array.isArray(possiblePositiveIntegers) ) {
-	possiblePositiveIntegers.forEach( possiblePositiveInteger => {
-	    if ( Number.isInteger(Number(possiblePositiveInteger)) && Number(possiblePositiveInteger) > 0 ) {
-		decimalPositiveIntegers.push( Number(possiblePositiveInteger) );
-	    }
-	} );
+		possiblePositiveIntegers.forEach( possiblePositiveInteger => {
+	    	if ( Number.isInteger(Number(possiblePositiveInteger)) && Number(possiblePositiveInteger) > 0 ) {
+				decimalPositiveIntegers.push( Number(possiblePositiveInteger) );
+	    	}
+		} );
     } else if ( Number.isInteger(Number(possiblePositiveIntegers)) && Number(possiblePositiveIntegers) > 0 ) { 
-	decimalPositiveIntegers = [ Number(possiblePositiveIntegers) ];
+		decimalPositiveIntegers = [ Number(possiblePositiveIntegers) ];
     }
 
     let decimalPositiveIntegersInWords = [];
